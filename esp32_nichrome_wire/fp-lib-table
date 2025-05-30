@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "nichrome_project")(type "KiCad")(uri "${KIPRJMOD}/nichrome_project.pretty")(options "")(descr ""))
+)
