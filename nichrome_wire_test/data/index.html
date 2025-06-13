@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wire Temperature Control</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .container {
+    width: 90%;
+    max-width: 600px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .control {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .control h3 {
+    margin: 0 0 10px;
+    font-size: 16px;
+  }
+
+  .control button, .control input {
+    height: 30px; /* Reduced height */
+    line-height: 30px;
+    vertical-align: middle;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 14px; /* Reduced font size */
+    margin: 0 5px;
+  }
+
+  .control input {
+    width: 60px;
+    text-align: center;
+    background-color: #f5f5f5;
+    color: #333;
+    font-weight: bold;
+  }
+
+  .control button {
+    width: 60px; /* Reduced width */
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .control button:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+  }
+
+  .control button:active {
+    background-color: #3e8e41;
+    transform: scale(0.95);
+  }
+
+  .control button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  .control p {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <!-- Generate 8 controls -->
+    <div class="control" id="wire-1">
+      <h3>Wire 1</h3>
+      <button onclick="changeValue(1, -5)">-</button>
+      <input type="number" id="input-wire-1" value="0" min="0" max="255" readonly>
+      <button onclick="changeValue(1, 5)">+</button>
+      <p>Current Temperature: <span id="temp-wire-1">0</span>°C</p>
+    </div>
+    <div class="control" id="wire-2">
+      <h3>Wire 2</h3>
+      <button onclick="changeValue(2, -5)">-</button>
+      <input type="number" id="input-wire-2" value="0" min="0" max="255" readonly>
+      <button onclick="changeValue(2, 5)">+</button>
+      <p>Current Temperature: <span id="temp-wire-2">0</span>°C</p>
+    </div>
+    <div class="control" id="wire-3">
+      <h3>Wire 3</h3>
+      <button onclick="changeValue(3, -5)">-</button>
+      <input type="number" id="input-wire-3" value="0" min="0" max="255" readonly>
+      <button onclick="changeValue(3, 5)">+</button>
+      <p>Current Temperature: <span id="temp-wire-3">0</span>°C</p>
+    </div>
+    <div class="control" id="wire-4">
+      <h3>Wire 4</h3>
+      <button onclick="changeValue(4, -5)">-</button>
+      <input type="number" id="input-wire-4" value="0" min="0" max="255" readonly>
+      <button onclick="changeValue(4, 5)">+</button>
+      <p>Current Temperature: <span id="temp-wire-4">0</span>°C</p>
+    </div>
+    <div class="control" id="wire-5">
+      <h3>Wire 5</h3>
+      <button onclick="changeValue(5, -5)">-</button>
+      <input type="number" id="input-wire-5" value="0" min="0" max="255" readonly>
+      <button onclick="changeValue(5, 5)">+</button>
+      <p>Current Temperature: <span id="temp-wire-5">0</span>°C</p>
+    </div>
+    <div class="control" id="wire-6">
+      <h3>Wire 6</h3>
+      <button onclick="changeValue(6, -5)">-</button>
+      <input type="number" id="input-wire-6" value="0" min="0" max="255" readonly>
+      <button onclick="changeValue(6, 5)">+</button>
+      <p>Current Temperature: <span id="temp-wire-6">0</span>°C</p>
+    </div>
+    <div class="control" id="wire-7">
+      <h3>Wire 7</h3>
+      <button onclick="changeValue(7, -5)">-</button>
+      <input type="number" id="input-wire-7" value="0" min="0" max="255" readonly>
+      <button onclick="changeValue(7, 5)">+</button>
+      <p>Current Temperature: <span id="temp-wire-7">0</span>°C</p>
+    </div>
+    <div class="control" id="wire-8">
+      <h3>Wire 8</h3>
+      <button onclick="changeValue(8, -5)">-</button>
+      <input type="number" id="input-wire-8" value="0" min="0" max="255" readonly>
+      <button onclick="changeValue(8, 5)">+</button>
+      <p>Current Temperature: <span id="temp-wire-8">0</span>°C</p>
+    </div>
+  </div>
+
+  <script>
+    function changeValue(wire, delta) {
+      const input = document.getElementById(`input-wire-${wire}`);
+      const tempDisplay = document.getElementById(`temp-wire-${wire}`);
+      let currentValue = parseInt(input.value);
+      const newValue = Math.min(255, Math.max(0, currentValue + delta));
+      input.value = newValue;
+      tempDisplay.textContent = newValue;
+
+      // Send GET request to update the wire temperature
+      fetch(`http://192.168.0.1/temperature?wire=${wire}&value=${newValue}`)
+        .then(response => {
+          if (!response.ok) {
+            alert(`Failed to update wire ${wire}.`);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert(`Failed to update wire ${wire}.`);
+        });
+    }
+  </script>
+</body>
+</html>
